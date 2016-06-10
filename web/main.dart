@@ -4,7 +4,7 @@ import 'package:polymer_elements/iron_flex_layout/classes/iron_flex_layout.dart'
 import 'package:polymer/polymer.dart';
 
 import 'package:angular2/angular2.dart';
-import 'package:angular2/bootstrap.dart';
+import 'package:angular2/platform/browser.dart';
 
 import 'package:tic_tac_toe/views/main_app/main_app.dart';
 import 'package:tic_tac_toe/services/logger.dart';
@@ -12,18 +12,14 @@ import 'package:tic_tac_toe/services/logger.dart';
 import 'package:logging/logging.dart';
 
 const String APP_NAME = "tic_tac_toe";
+final bool debugMode = window.location.host.contains('localhost');
 
-final AppMode appMode = window.location.host.contains('localhost') ? AppMode.Develop : AppMode.Production;
-
-final OpaqueToken AppNameToken = new OpaqueToken("AppNameToken");
+final Logger _log = initLog(APP_NAME, debugMode);
 
 main() async {
   await initPolymer();
 
   bootstrap(MainApp, [
-    provide(AppNameToken, useValue: APP_NAME),
-    provide(AppMode, useValue: appMode),
-    provide(Logger, useFactory: (String name, AppMode mode) =>
-        initLog(name, mode), deps: [AppNameToken, AppMode])
+    provide(Logger, useValue: _log)
   ]);
 }
